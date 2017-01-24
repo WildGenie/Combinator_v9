@@ -1,4 +1,4 @@
-classdef cameraSingleImage < acquireFunctions.cameraSingleImage_template
+classdef a_cameraSingleImage < acquireFunctions.cameraSingleImage_template
 	methods
 		function this = cameraSingleImage()
 			
