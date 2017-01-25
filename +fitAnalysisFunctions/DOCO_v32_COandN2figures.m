@@ -378,7 +378,8 @@ function DOCO_v32_COandN2figures(fitobjnames,fitobjs)
             b0 = [1    0.005    0.01    0.001];
             options = optimoptions(@lsqnonlin,'Algorithm','trust-region-reflective');
             options.TolFun = 1e-6;
-            b_SIMPLERATE = lsqnonlin(f,b0,lb,ub,options)
+            [b_SIMPLERATE,~,residual,~,~,~,J] = lsqnonlin(f,b0,lb,ub,options);
+			CI = nlparci(b_SIMPLERATE,residual,'jacobian',J);
             Afit(ii) = b_SIMPLERATE(1)*1e12;
             r1a(ii) = b_SIMPLERATE(2)*1e6;
             rDOCOloss(ii) = b_SIMPLERATE(3)*1e6;
