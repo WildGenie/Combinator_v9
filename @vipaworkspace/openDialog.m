@@ -86,6 +86,13 @@ function openDialog(this)
                         else
                             this.ImagesList.addItem(h,0,0,this.makeVariableName(h.name));
                         end
+                    case 'kineticsmodelsobjects.kineticsmodelobject'
+                        h = data.(fields{j});
+                        if isempty(h.name)
+                            this.KineticsModelsList.addItem(h,0,0,fields{j});
+                        else
+                            this.KineticsModelsList.addItem(h,0,0,this.makeVariableName(h.name));
+                        end
                 end
             end
         end

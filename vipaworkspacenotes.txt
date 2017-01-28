@@ -18,4 +18,10 @@ X axis calibration:
 
 - fix "default view"
 
-- stem plot for fit spectra
+KINETICS FITTING:
+- Kinetics fit table browser crashing?
+- Add global fitting of parameters
+
+tableBrowser
+- row names hover on points
+- Linearize function

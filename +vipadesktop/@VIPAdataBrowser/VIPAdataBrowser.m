@@ -198,16 +198,16 @@ classdef VIPAdataBrowser < handle
             WarningState = warning('off','MATLAB:Containers:Map:NoKeyToRemove');
             selectionPopupMenu.removeMenuItem('RecordCopyingMenuItem');
 
-			% % Add menu items from contextmenu directory
-			% menuitems = vipadesktop.getpackagemfiles('fitsobjects.contextmenu');
-			% for i = numel(menuitems):-1:1
-				% s.Text = eval(sprintf('%s.menuitemText',menuitems{i}));
-				% s.Name =  eval(sprintf('%s.menuitemName',menuitems{i}));
-				% f = str2func(sprintf('%s.menucallback',menuitems{i}));
-				% s.Callback =  @(selecteditems) f(this.Parent,selecteditems);
-				% s.MultiSelection = eval(sprintf('%s.menuitemMultiSelection',menuitems{i}));
-				% selectionPopupMenu.addMenuItem(s,1);
-			% end
+			% Add menu items from contextmenu directory
+			menuitems = vipadesktop.getpackagemfiles('kineticsmodelsobjects.contextmenu');
+			for i = numel(menuitems):-1:1
+				s.Text = eval(sprintf('%s.menuitemText',menuitems{i}));
+				s.Name =  eval(sprintf('%s.menuitemName',menuitems{i}));
+				f = str2func(sprintf('%s.menucallback',menuitems{i}));
+				s.Callback =  @(selecteditems) f(this.Parent,selecteditems);
+				s.MultiSelection = eval(sprintf('%s.menuitemMultiSelection',menuitems{i}));
+				selectionPopupMenu.addMenuItem(s,1);
+			end
 			
             %nonselectionPopupMenu.removeMenuItem('RecordCreationMenuItem');
             nonselectionPopupMenu.removeMenuItem('PasteMenuItem');

@@ -12,6 +12,7 @@ classdef vipaworkspace < handle
         SpectraList
         FitSpectraList
         FitsList
+		KineticsModelsList
         
         % Tabs
         hometab
@@ -60,6 +61,7 @@ classdef vipaworkspace < handle
             this.SpectraList = vipadesktop.SpectraList();
             this.FitSpectraList = vipadesktop.FitSpectraList();
             this.FitsList = vipadesktop.FitsList();
+			this.KineticsModelsList = vipadesktop.KineticsModelsList();
 %             this.SpectraList2 = vipadesktop.SpectraList();
             this.DataBrowser = vipadesktop.VIPAdataBrowser(this);
             this.ImagesList.setWorkspace(this.DataBrowser.imagesWorkspace);
@@ -67,6 +69,7 @@ classdef vipaworkspace < handle
             this.SpectraList.setWorkspace(this.DataBrowser.spectraWorkspace);
             this.FitSpectraList.setWorkspace(this.DataBrowser.fitspectraWorkspace);
             this.FitsList.setWorkspace(this.DataBrowser.fitsWorkspace);
+			this.KineticsModelsList.setWorkspace(this.DataBrowser.kineticsmodelsWorkspace);
             %this.SpectraList.addSpectra(0,0, 0,'test1');
 %             this.SpectraList2.setDataBrowser(this.DataBrowser);
 %             this.SpectraList2.addSpectra(0,0, 0,0);

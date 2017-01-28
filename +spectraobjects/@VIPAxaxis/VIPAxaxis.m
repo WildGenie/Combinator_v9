@@ -70,6 +70,8 @@ classdef VIPAxaxis < handle
             set(cursorMode,'UpdateFcn',@(o,e) obj.datatipUpdateFunction(o,e));
             axmenu = uicontextmenu();
             set(obj.axExp,'UIContextMenu',axmenu);
+			hbrush = brush(obj.hf);
+			set(hbrush,'ActionPostCallback',@(~,~) obj.weightedMeanOfBrushedPoints(obj.axExp,obj.hExp,obj.hExpStem));
 			
             %obj.hSim = obj.plotSim(obj.axSim);
             obj.updatePlotSim(obj.axSim,obj.hSim);
@@ -297,6 +299,11 @@ classdef VIPAxaxis < handle
             % Update the plot
             obj.updatePlotExpStem(axExp,hExpStem);
         end
+		function expAxesUpFunction(obj)
+			if strcmp(datacursormode(obj.axExp),'on')
+				obj.weightedMeanOfBrushedPoints(obj,obj.axExp,obj.hExp,obj.hExpStem);
+			end
+		end
 		function addExperimentalSelection(obj,xvalue,yvalue)
 			numpts = numel(obj.linePositions);
 			if numpts ~= numel(obj.lineHeights) || ...

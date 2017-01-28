@@ -21,9 +21,13 @@ classdef fitbrowser < handle
             
             % Construct the figure
             if isempty(this.Parent.name)
-                this.figureHandle = figure('CloseRequestFcn',@figCloseFunction);
+                this.figureHandle = figure(...
+										'CloseRequestFcn',@figCloseFunction,...
+										'HandleVisibility','callback');
             else
-                this.figureHandle = figure('Name',this.Parent.name,'NumberTitle','off','CloseRequestFcn',@figCloseFunction);
+                this.figureHandle = figure('Name',sprintf('KFit:%s',this.Parent.name),'NumberTitle','off',...
+										'CloseRequestFcn',@figCloseFunction,...
+										'HandleVisibility','callback');
             end
             
             % Construct the plot and axes
