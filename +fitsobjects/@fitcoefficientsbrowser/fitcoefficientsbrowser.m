@@ -57,8 +57,9 @@ classdef fitcoefficientsbrowser < handle
             
             for i = 1:numel(this.Parent.fitbNames)
                 ind = this.Parent.fitbNamesInd(i);
-                %errorbar(this.Parent.t,this.Parent.fitb(ind,:),this.Parent.fitbError(ind,:),'.-');
-                plot(this.Parent.t,this.Parent.fitb(ind,:),'.-');
+                he = errorbar(this.Parent.t,this.Parent.fitb(ind,:),this.Parent.fitbError(ind,:),'.-');
+				addlistener(he,'MarkedClean',@(obj,~) seterrorbarwidths(obj,0.015));
+                %plot(this.Parent.t,this.Parent.fitb(ind,:),'.-');
                 hold on;
             end
             xlabel(this.axesHandle,'Time [\mus]');

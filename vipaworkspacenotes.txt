@@ -6,22 +6,19 @@ SPECTRA COLLECTION PROCEDURE:
 4) Calibrate the spectrum using the calibration gas image
 5) Open live spectrum viewer
 
-X Axis Correction:
-------------------
-
-1. shortcut key for brush (ctl+b)
-
 VIPA Workspace TODO List:
 -------------------------
 
-X axis calibration:
-
-- fix "default view"
-
 KINETICS FITTING:
-- Kinetics fit table browser crashing?
 - Add global fitting of parameters
 
 tableBrowser
 - row names hover on points
 - Linearize function
+
+Everything:
+- Make initial conditions a table in Kinetics models. Edit using:
+ h = matlab.desktop.vareditor.VariableEditor('transKinetics.fitTable');
+ h.open
+
+- Add "new figure" capability

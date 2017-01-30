@@ -23,6 +23,7 @@ function bfit = performfit(obj)
 	end
 	
 	fitStruct = struct(fitStructInit{:});
+	fitErrorStruct = struct(fitStructInit{:});
 
 	CO = zeros(size(obj.kineticsdata));
 	intBox = ones(size(obj.kineticsdata))*50;
@@ -148,11 +149,13 @@ function bfit = performfit(obj)
                 obj.fitdata(i).redchisqr = feval(@(x) sum(x)./(numel(x)-sum(obj.fitLowerUpperStartingScope(4,:)==1)),funs{i}(b_SIMPLERATE).^2);
                 for j = 1:numel(obj.fitParameterNames)
                     fitStruct(i).(obj.fitParameterNames{j}) = b_SIMPLERATE(j);
+					fitErrorStruct(i).(obj.fitParameterNames{j}) = ebars(j);
                 end
             end
     end
 	
 	obj.fitTable = struct2table(fitStruct);
+	obj.fitErrorTable = struct2table(fitErrorStruct);
     
     % Set the row names
     rownames = {};
@@ -160,8 +163,10 @@ function bfit = performfit(obj)
        rownames{i} = obj.kineticsdata(i).name; 
     end
     obj.fitTable.Properties.RowNames = rownames;
+	obj.fitErrorTable.Properties.RowNames = rownames;
     
 	disp(obj.fitTable);
+	disp(obj.fitErrorTable);
 	
 	obj.updatePlots();
 	

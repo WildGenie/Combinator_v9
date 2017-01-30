@@ -115,7 +115,7 @@ classdef fitresultsplotbrowser < handle
 			this.trendlinePlotHandle = plot(this.axesHandle,NaN,NaN,'-','LineWidth',2,'Color',[0.7 0.7 0.7]);
 			hold(this.axesHandle,'on');
             this.mlrPlotHandle = plot(this.axesHandle,NaN,NaN,'o','LineWidth',1.5,'Color',[0.7 0.7 0.7]);
-			this.plotHandle = plot(this.axesHandle,NaN,NaN,'bo','LineWidth',1.5);
+			this.plotHandle = errorbar(this.axesHandle,NaN,NaN,NaN,'bo','LineWidth',1.5);
 			hold(this.axesHandle,'off');
 
 			xlabel(this.axesHandle,'CO');
@@ -144,6 +144,8 @@ classdef fitresultsplotbrowser < handle
 			fy = str2func([prestring yAxisString]);
             x = fx(dataCols{:});
             y = fy(dataCols{:});
+			ye = 0.1*fy(dataCols{:});
+			warning('Errorbars not correct')
 			
 			%%% Perform a multiple linear regression
             mlrString = '';
@@ -172,6 +174,8 @@ classdef fitresultsplotbrowser < handle
 			if isempty(filterString{1})
 				set(this.plotHandle,'XData',x);
 				set(this.plotHandle,'YData',y);
+				set(this.plotHandle,'LData',ye);
+				set(this.plotHandle,'UData',ye);
 				set(this.mlrPlotHandle,'XData',mlrX);
 				set(this.mlrPlotHandle,'YData',mlrY);
 			else
@@ -179,6 +183,8 @@ classdef fitresultsplotbrowser < handle
 				ind = ffilter(dataCols{:});
 				set(this.plotHandle,'XData',x(ind));
 				set(this.plotHandle,'YData',y(ind));
+				set(this.plotHandle,'LData',ye(ind));
+				set(this.plotHandle,'UData',ye(ind));
 				set(this.mlrPlotHandle,'XData',mlrX(ind));
 				set(this.mlrPlotHandle,'YData',mlrY(ind));
             end

@@ -22,16 +22,17 @@ classdef fitbrowser < handle
             % Construct the figure
             if isempty(this.Parent.name)
                 this.figureHandle = figure(...
-										'CloseRequestFcn',@figCloseFunction,...
-										'HandleVisibility','callback');
+										'CloseRequestFcn',@figCloseFunction);%,...
+										%'HandleVisibility','callback');
             else
                 this.figureHandle = figure('Name',sprintf('KFit:%s',this.Parent.name),'NumberTitle','off',...
-										'CloseRequestFcn',@figCloseFunction,...
-										'HandleVisibility','callback');
+										'CloseRequestFcn',@figCloseFunction);%,...
+										%'HandleVisibility','callback');
             end
             
             % Construct the plot and axes
             this.axesHandle = axes('Parent',this.figureHandle,'position',[0.13 0.20 0.79 0.72]);
+
             this.sliderHandle = uicontrol('Parent',this.figureHandle,'Style','slider','Position',[81,10,419,23],...
               'value',1, 'min',1, 'max',1,'sliderstep',[1 1]);
             this.imagePlot();
@@ -100,7 +101,8 @@ classdef fitbrowser < handle
 				% Make the experiment plots
                 this.expPlotHandles = [];
                 for i = 1:numplots
-                    this.expPlotHandles(i) = plot(this.axesHandle,NaN,NaN,'o','LineWidth',1.5);
+                    this.expPlotHandles(i) = errorbar(this.axesHandle,NaN,NaN,NaN,'o','LineWidth',1.5);
+					addlistener(this.expPlotHandles(i),'MarkedClean',@(obj,~) seterrorbarwidths(obj,0.015));
                     hold(this.axesHandle,'on');
                 end
 				
@@ -126,6 +128,8 @@ classdef fitbrowser < handle
 			for i = 1:numel(this.expPlotHandles)
 				set(this.expPlotHandles(i),'XData',this.Parent.kineticsdata(ind).time);
 				set(this.expPlotHandles(i),'YData',this.Parent.kineticsdata(ind).concs(i,:));
+				set(this.expPlotHandles(i),'LData',this.Parent.kineticsdata(ind).concsError(i,:));
+				set(this.expPlotHandles(i),'UData',this.Parent.kineticsdata(ind).concsError(i,:));
 				chisqr = '';
 			end
             

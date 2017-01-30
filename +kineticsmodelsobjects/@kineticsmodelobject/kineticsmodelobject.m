@@ -34,6 +34,7 @@ classdef kineticsmodelobject < handle
 		% Fit results
 		fitdata = struct([]);
 		fitTable = [];
+		fitErrorTable = [];
 		conditionsTable = [];
 		
 		fitb = [];
@@ -54,13 +55,13 @@ classdef kineticsmodelobject < handle
 			obj.tempfitFunctions = {ODfitFun, DOCOfitFun};
 			
 			% Hard code the lower, upper, scope
-			obj.fitParameterNames = {'a1','a2','b1','b2','b3','Adoco','rLoss'};
+			obj.fitParameterNames = {'a1','a2','b1','b2','b3','Adoco','rLoss','Ad2o','d2oLoss'};
 			obj.fitEquations = {};
 			obj.fitLowerUpperStartingScope = ...
-				[0 0 0 0 0 0 0;...
-				 inf inf inf inf inf inf inf;...
-				 1    1    0.08    0.005    0.5    0.0329    0.0428;...
-				 1 1 1 1 1 1 1];
+				[0 0 0 0 0 0 0 0 0;...
+				 inf 1 inf inf inf inf inf inf inf;...
+				 8    0.15    0.1    0.002    0.22    0.0329    0.0428 0.1 0;...
+				 1 1 1 1 0 1 0 1 0];
         end
         function hf = fitbrowser(obj,varargin)
             if ~isempty(obj.plotHandles)
