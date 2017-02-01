@@ -128,6 +128,7 @@ classdef fitresultsplotbrowser < handle
 			% get the data
 			prestring = '@(';
 			dataCols = {};
+			dataErrorCols = {};
 			for i = 1:numel(this.Parent.fitTable.Properties.VariableNames)
 				if i == 1
 					prestring = [prestring this.Parent.fitTable.Properties.VariableNames{i}];
@@ -135,6 +136,7 @@ classdef fitresultsplotbrowser < handle
 					prestring = [prestring ',' this.Parent.fitTable.Properties.VariableNames{i}];
 				end
 				dataCols{i} = this.Parent.fitTable.(i);
+				dataErrorCols{i} = edouble(this.Parent.fitTable.(i),this.Parent.fitErrorTable.(i));
 			end
 			prestring = [prestring ') '];
 			
@@ -143,9 +145,11 @@ classdef fitresultsplotbrowser < handle
 			fx = str2func([prestring xAxisString]);
 			fy = str2func([prestring yAxisString]);
             x = fx(dataCols{:});
-            y = fy(dataCols{:});
-			ye = 0.1*fy(dataCols{:});
-			warning('Errorbars not correct')
+            %y = fy(dataCols{:});
+			yedouble = fy(dataErrorCols{:});
+			y = yedouble.value;
+			ye = yedouble.errorbar;
+			%warning('Errorbars not correct')
 			
 			%%% Perform a multiple linear regression
             mlrString = '';
@@ -156,18 +160,22 @@ classdef fitresultsplotbrowser < handle
                 mlrYstring = this.yAxisTextbox.String{1};
                 mlrfx = str2func([prestring '[' mlrXstring ']']);
                 mlrfy = str2func([prestring '[' mlrYstring ']']);
-                b = regress(mlrfy(dataCols{:}),mlrfx(dataCols{:}));
+				mlryedouble = mlrfy(dataErrorCols{:});
+                %b = regress(mlrfy(dataCols{:}),mlrfx(dataCols{:}));
+				[b,stdx,mse] = lscov(mlrfx(dataCols{:}),mlryedouble.value,mlryedouble.weight);
+				bStdErr = stdx/min(1,sqrt(mse));
                 mlrY = mlrfx(dataCols{:})*b;
                 mlrString = [mlrYstring ' = '];
                 C = strsplit(mlrXstring,',');
                 for i = 1:numel(b)
                     if i==1
-                        mlrString = [mlrString sprintf('%.3g',b(i)) '*' C{i}];
+                        mlrString = [mlrString sprintf('%.2g(%.1g)',b(i),bStdErr(i)) '*' C{i}];
                     else
-                        mlrString = [mlrString ' + ' sprintf('%.3g',b(i)) '*' C{i}];
+                        mlrString = [mlrString ' + ' sprintf('%.2g(%.1g)',b(i),bStdErr(i)) '*' C{i}];
                     end
                 end
             catch err
+				err
             end
             %%% END MLR
             

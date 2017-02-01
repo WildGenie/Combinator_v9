@@ -6,7 +6,7 @@ function bfit = performfit(obj)
 	%           fitLowerUpperStartingScope
             obj.fitOptions = optimoptions(@lsqnonlin);
             obj.fitOptions.Algorithm = 'trust-region-reflective';
-            obj.fitOptions.Display = 'iter';
+            obj.fitOptions.Display = 'off';%'iter';
             obj.fitOptions.MaxFunEvals = 100000;
             obj.fitOptions.MaxIter = 400;
             obj.fitOptions.TolFun = 1e-8;
@@ -26,7 +26,7 @@ function bfit = performfit(obj)
 	fitErrorStruct = struct(fitStructInit{:});
 
 	CO = zeros(size(obj.kineticsdata));
-	intBox = ones(size(obj.kineticsdata))*50;
+	intBox = zeros(size(obj.kineticsdata));
 	funs = {};
 	fsim = {};
 	for i = 1:numel(obj.kineticsdata)
@@ -35,12 +35,15 @@ function bfit = performfit(obj)
 		for j = 1:numel(obj.kineticsdata(i).conditionsTable.Properties.VariableNames)
 			fitStruct(i).(obj.kineticsdata(i).conditionsTable.Properties.VariableNames{j}) = ...
 						obj.kineticsdata(i).conditionsTable.(j);
+			fitErrorStruct(i).(obj.kineticsdata(i).conditionsTable.Properties.VariableNames{j}) = ...
+						0*obj.kineticsdata(i).conditionsTable.(j);
         end
 		
 		time = obj.kineticsdata(i).time;
         
         %%% FIXED DOCO RATE EQUATIONS
             CO(i) = fitStruct(i).CO;
+			intBox(i) = fitStruct(i).intWindow;
             ODidx = min(find(strcmp(obj.kineticsdata(i).moleculenames,'OD')));
             DOCOidx =  min(find(strcmp(obj.kineticsdata(i).moleculenames,'DOCO')));
 			D2Oidx =  min(find(strcmp(obj.kineticsdata(i).moleculenames,'D2O')));
@@ -142,8 +145,10 @@ function bfit = performfit(obj)
                 odmask = logical([1 1 1 1 1 0 0 0 0]);
                 docomask = logical([0 0 0 0 0 1 1 0 0]);
 				d2omask = logical([0 0 0 0 0 0 0 1 1]);
-                [b_OD,ebars] = lsqnonlinWithFixedParams(fod,fitindcs & odmask,b0,lb,ub,obj.fitOptions);
-                [b_SIMPLERATE,ebars] = lsqnonlinWithFixedParams(@(b) [fdoco(b) fd2o(b)],fitindcs & (docomask | d2omask),b_OD,lb,ub,obj.fitOptions);
+                [b_OD,ebars_OD] = lsqnonlinWithFixedParams(fod,fitindcs & odmask,b0,lb,ub,obj.fitOptions);
+                [b_SIMPLERATE,ebars_DOCO] = lsqnonlinWithFixedParams(@(b) [fdoco(b) fd2o(b)],fitindcs & (docomask | d2omask),b_OD,lb,ub,obj.fitOptions);
+				
+				ebars = sqrt(ebars_OD.^2 + ebars_DOCO.^2);
                 
                 obj.fitdata(i).f = cellfun(@(f) {@(t) f(t,b_SIMPLERATE)},fsim{i});
                 obj.fitdata(i).redchisqr = feval(@(x) sum(x)./(numel(x)-sum(obj.fitLowerUpperStartingScope(4,:)==1)),funs{i}(b_SIMPLERATE).^2);
