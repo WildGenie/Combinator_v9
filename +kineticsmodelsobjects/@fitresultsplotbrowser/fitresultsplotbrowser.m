@@ -28,12 +28,12 @@ classdef fitresultsplotbrowser < handle
             % Construct the figure
             if isempty(this.Parent.name)
                 this.figureHandle = figure(...
-										'CloseRequestFcn',@figCloseFunction,...
-										'HandleVisibility','callback');
+										'CloseRequestFcn',@figCloseFunction);%,...
+										%'HandleVisibility','callback');
             else
                 this.figureHandle = figure('Name',this.Parent.name,'NumberTitle','off',...
-										'CloseRequestFcn',@figCloseFunction,...
-										'HandleVisibility','callback');
+										'CloseRequestFcn',@figCloseFunction);%,...
+										%'HandleVisibility','callback');
             end
             
 			% Construct the filter box
@@ -103,6 +103,12 @@ classdef fitresultsplotbrowser < handle
             % Remove figure handles
             delete(obj.figureHandle);
         end
+		function NewFigure(this)
+			
+		end
+		function SaveFigure(this)
+			
+		end
         function Update(this)
             this.updatePlot();
         end
@@ -151,6 +157,13 @@ classdef fitresultsplotbrowser < handle
 			ye = yedouble.errorbar;
 			%warning('Errorbars not correct')
 			
+			if isempty(filterString{1})
+				ind = ones(size(x));
+			else
+				ffilter = str2func([prestring filterString{1}]);
+				ind = ffilter(dataCols{:});
+			end
+			
 			%%% Perform a multiple linear regression
             mlrString = '';
             mlrX = x;
@@ -161,8 +174,11 @@ classdef fitresultsplotbrowser < handle
                 mlrfx = str2func([prestring '[' mlrXstring ']']);
                 mlrfy = str2func([prestring '[' mlrYstring ']']);
 				mlryedouble = mlrfy(dataErrorCols{:});
+				mlrx = mlrfx(dataCols{:});
+				mlry = mlryedouble.value;
+				mlryw = mlryedouble.weight;
                 %b = regress(mlrfy(dataCols{:}),mlrfx(dataCols{:}));
-				[b,stdx,mse] = lscov(mlrfx(dataCols{:}),mlryedouble.value,mlryedouble.weight);
+				[b,stdx,mse] = lscov(mlrx(repmat(ind,1,size(mlrx,2))),mlry(ind),mlry(ind));
 				bStdErr = stdx/min(1,sqrt(mse));
                 mlrY = mlrfx(dataCols{:})*b;
                 mlrString = [mlrYstring ' = '];
